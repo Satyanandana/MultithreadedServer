@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="MultithreadedServer" default="run" basedir=".">
+
+	<property environment="env" />
+
+	<property name="java.home" value="${env.JAVA_HOME}" />
+	<property name="src.dir" value="src" />
+	<property name="bin.dir" value="bin" />
+	<property name="lib.dir" value="lib" />
+	<property name="classes.dir" value="${bin.dir}/classes" />
+
+
+	<!-- Classpath declaration: all jars in two lib dirs, plus one other -->
+	<path id="project.classpath">
+		<pathelement location="${classes.dir}" />
+		<fileset dir="${java.home}\lib">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${lib.dir}">
+					<include name="*.jar" />
+				</fileset>
+	</path>
+
+
+	<!-- Clean up -->
+	<target name="clean" description="Clean up the derived files">
+		<delete dir="${classes.dir}" />
+		<echo message="changing file extension"/>
+		<move todir="${lib.dir}" overwrite="true">
+	       <fileset dir="${lib.dir}" />
+	       <mapper type="glob"  from="*.some"  to="*.jar" />
+		</move>
+	</target>
+
+	<!-- Compile Java source, requesting extra info on deprecated methods -->
+	<target name="compile" description="Clean up the derived files"
+		depends="clean">
+		<mkdir dir="${classes.dir}" />
+		<javac includeantruntime="false" srcdir="${src.dir}" debug="on"
+			destdir="${classes.dir}" classpathref="project.classpath">
+			<compilerarg value="-Xlint:deprecation" />
+		</javac>
+	</target>
+
+	<target name="build" depends="compile" />
+
+	<target name="run" depends="build">
+		<java fork="true" classname="server.TinyHttpd3"
+			failonerror="true" dir="${basedir}">
+			<classpath refid="project.classpath" />
+		</java>
+	</target>
+
+</project>

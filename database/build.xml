@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Individual Project DBhelpers">
+	
+	<path id="project.classpath">
+			
+			<pathelement location="../lib/hsqldb.jar" />
+			
+		</path>
+
+	<!-- ==========================HSQLDB helpers================== -->
+	<!-- Unlike Oracle, HSQLDB comes and goes at our whim. We start it up when we
+			want to use it, leave it running in a process while we do our testing,
+			and then bring it down.  Each time we bring it up, we make it start off
+			empty, so we need to load the tables before running the app.
+		-->
+	<!-- Start the HSQL DB server: do this before running apps -->
+
+	<target name="start-hsqldb" description="Run HSQL database server">
+		<!-- Delete HSQLDB's database script and log, its record of past actions -->
+		<!-- That way, it starts off empty of data each time -->
+		<delete file="hsqlfile.script" failonerror="false"/>
+		<delete file="hsqlfile.log" failonerror="false"/>
+		<delete file="hsqlfile.properties" failonerror="false"/>
+		<java classname="org.hsqldb.Server" fork="true" classpathref="project.classpath" 
+			failonerror="true">
+			<arg line="--database.0 file:hsqlfile" /> 
+		</java>
+	</target>
+
+	<target name="shutdown-hsqldb" description="Shutdown HSQL database">
+		<sql classpathref="project.classpath" driver="org.hsqldb.jdbcDriver" 
+			url="jdbc:hsqldb:hsql://localhost/" userid="sa" password="" autocommit="true">
+	       shutdown
+	       </sql>
+	</target>
+
+	<target name="load-hsqldb" description="Load HSQL database">
+		<sql classpathref="project.classpath" driver="org.hsqldb.jdbcDriver" 
+			url="jdbc:hsqldb:hsql://localhost/" userid="sa" password="" src="createdb.sql" />
+	</target>
+	
+	<target name="show-hsqldb" description="Show  HSQL database ">
+		<sql classpathref="project.classpath" driver="org.hsqldb.jdbcDriver" 
+			url="jdbc:hsqldb:hsql://localhost/" userid="sa" password="" src="showdb.sql" print="true" />
+	</target>
+	<target name="drop-hsqldb" description="Drop HSQL database">
+		<sql classpathref="project.classpath" driver="org.hsqldb.jdbcDriver" 
+			url="jdbc:hsqldb:hsql://localhost/" userid="sa" password="" src="dropdb.sql" 
+			onerror="continue" />
+	</target>
+
+</project>
