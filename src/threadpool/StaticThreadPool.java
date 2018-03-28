@@ -4,11 +4,11 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
 public final class StaticThreadPool {
-	private static StaticThreadPool staticThreadPool = null;
+	private static StaticThreadPool staticThreadPool;
 	protected boolean debug = false;
 	protected boolean stopped = false;
-	private WaitingRunnableQueue queue = null;
-	private Vector<ThreadPoolThread> availableThreads = null;
+	private WaitingRunnableQueue queue;
+	private Vector<ThreadPoolThread> availableThreads;
 	private static final ReentrantLock lock = new ReentrantLock();
 
 	private StaticThreadPool(int maxThreadNum, boolean debug) {

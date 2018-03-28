@@ -31,6 +31,14 @@ public class TinyHttpd3 {
 				requestHandler = RequestHandler.getInstance("LFU", serverSocket, servlet);
 				System.out.println("Initialized RequestHandler with LFU filecaching ..");
 				System.out.println(" ");
+				
+				Runtime.getRuntime().addShutdownHook(new Thread(){public void run(){
+				    try {
+				    	serverSocket.close();
+				        System.out.println("The server is shut down!");
+				    } catch (IOException e) { /* failed */ }
+				}});
+				
 				while (true) {
 					System.out.println("Listening to a connection on the local port " + serverSocket.getLocalPort() + "...");
 					Socket client = serverSocket.accept();
@@ -61,6 +69,8 @@ public class TinyHttpd3 {
 					}
 
 				}
+			}catch (Exception e) {
+				System.out.println(e.getStackTrace());
 			} finally {
 				serverSocket.close();
 			}
